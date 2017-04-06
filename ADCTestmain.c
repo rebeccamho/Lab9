@@ -3,6 +3,7 @@
 // Provide a function that initializes Timer0A to trigger ADC
 // SS3 conversions and request an interrupt when the conversion
 // is complete.
+// UART runs at 115,200 baud rate 
 // Daniel Valvano
 // May 3, 2015
 
@@ -37,7 +38,8 @@ long StartCritical (void);    // previous I bit, disable interrupts
 void EndCritical(long sr);    // restore I bit to previous value
 void WaitForInterrupt(void);  // low power mode
 
-#define F1HZ 80000000
+#define F1KHZ 80000000/1000
+#define F100HZ 80000000/100
 
 //debug code
 //
@@ -48,8 +50,10 @@ void WaitForInterrupt(void);  // low power mode
 
 int main(void){
   PLL_Init(Bus80MHz);                      // 80 MHz system clock
+	UART_Init();              // initialize UART device
+	UART_OutString("\nUART Initialized\n");
   SYSCTL_RCGCGPIO_R |= 0x00000020;         // activate port F
-  ADC0_InitTimer0ATriggerSeq3(0, F1HZ); // ADC channel 0, 10 Hz sampling
+  ADC0_InitTimer0ATriggerSeq3(0, F100HZ); // ADC channel 0, 1 Hz sampling
   GPIO_PORTF_DIR_R |= 0x04;                // make PF2 out (built-in LED)
   GPIO_PORTF_AFSEL_R &= ~0x04;             // disable alt funct on PF2
   GPIO_PORTF_DEN_R |= 0x04;                // enable digital I/O on PF2
@@ -58,10 +62,14 @@ int main(void){
   GPIO_PORTF_AMSEL_R = 0;                  // disable analog functionality on PF
   GPIO_PORTF_DATA_R &= ~0x04;              // turn off LED
   EnableInterrupts();
+	//UART_OutString("\nHere\n");
+
   while(1){
     WaitForInterrupt();
     GPIO_PORTF_DATA_R ^= 0x04;             // toggle LED
 		uint16_t count = CheckCount();
+		//UART_OutUDec(count);
+		//UART_OutString(" ");
 		if(count == 100) { // ADC values array is full
 			break;
 		}
@@ -72,7 +80,7 @@ int main(void){
 		uint32_t data = ADC_values[i];
 		UART_OutUDec(data);
 		if(i < 99) { // output comma between all data values
-			UART_OutString(", ");
+			UART_OutString("\n");
 		}
 	}
 }
