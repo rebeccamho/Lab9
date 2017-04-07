@@ -31,6 +31,7 @@
 #include "ADCT0ATrigger.h"
 #include "PLL.h"
 #include "UART.h"
+#include "ST7735.h"
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -51,7 +52,7 @@ void WaitForInterrupt(void);  // low power mode
 int main(void){
   PLL_Init(Bus80MHz);                      // 80 MHz system clock
 	UART_Init();              // initialize UART device
-	UART_OutString("\nUART Initialized\n");
+	UART_OutString("\n\rUART Initialized\n");
   SYSCTL_RCGCGPIO_R |= 0x00000020;         // activate port F
   ADC0_InitTimer0ATriggerSeq3(0, F100HZ); // ADC channel 0, 1 Hz sampling
   GPIO_PORTF_DIR_R |= 0x04;                // make PF2 out (built-in LED)
@@ -61,8 +62,11 @@ int main(void){
   GPIO_PORTF_PCTL_R = (GPIO_PORTF_PCTL_R&0xFFFFF0FF)+0x00000000;
   GPIO_PORTF_AMSEL_R = 0;                  // disable analog functionality on PF
   GPIO_PORTF_DATA_R &= ~0x04;              // turn off LED
-  EnableInterrupts();
-	//UART_OutString("\nHere\n");
+	Output_Init();
+	UART_OutString("\rHere\n");
+	ST7735_FillScreen(ST7735_BLACK); 
+	ST7735_SetCursor(0,0); 
+	EnableInterrupts();
 
   while(1){
     WaitForInterrupt();
@@ -70,18 +74,20 @@ int main(void){
 		uint16_t count = CheckCount();
 		//UART_OutUDec(count);
 		//UART_OutString(" ");
-		if(count == 100) { // ADC values array is full
+		if(count == 5) { // ADC values array is full
 			break;
 		}
   }
 	uint32_t* ADC_values = GetADCvalues();
 	UART_OutString("\n\rADC data =");
-	for(int i = 0; i < 100; i++) { // output ADC values to UART
+	for(int i = 0; i < 5; i++) { // output ADC values to UART
 		uint32_t data = ADC_values[i];
 		UART_OutUDec(data);
-		if(i < 99) { // output comma between all data values
-			UART_OutString("\n");
+		if(i < 4) { // output comma between all data values
+			UART_OutString("\n\r");
 		}
 	}
+	ST7735_OutUDec(ADC_values[0]); 
+
 }
 
