@@ -67,6 +67,13 @@ int main(void){
 	ST7735_FillScreen(ST7735_BLACK); 
 	ST7735_SetCursor(0,0); 
 	EnableInterrupts();
+	
+	//Init ST7735
+	ST7735_SetCursor(0,0); ST7735_OutString("My awesome machine");
+	ST7735_PlotClear(1000,4000);  // range from 0 to 4095
+	ST7735_SetCursor(0,1); ST7735_OutString("N=");
+	ST7735_SetCursor(0,2); ST7735_OutString("T="); ST7735_sDecOut2(2500);
+                        ST7735_OutString(" C");
 
   while(1){
     WaitForInterrupt();
