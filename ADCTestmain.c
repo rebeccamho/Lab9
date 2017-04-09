@@ -27,11 +27,13 @@
 // bottom of X-ohm potentiometer connected to ground
 // top of X-ohm potentiometer connected to +3.3V through X/10-ohm ohm resistor
 #include <stdint.h>
+#include <stdbool.h>
 #include "../ValvanoWareTM4C123/ValvanoWareTM4C123/inc/tm4c123gh6pm.h"
 #include "ADCT0ATrigger.h"
 #include "PLL.h"
 #include "UART.h"
 #include "ST7735.h"
+#include "FIFO.h"
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -78,13 +80,25 @@ int main(void){
   while(1){
     WaitForInterrupt();
     GPIO_PORTF_DATA_R ^= 0x04;             // toggle LED
+		
+		bool new_data = false;
+		uint32_t ADC_val;
+		while(!new_data) { // wait for new data in the FIFO
+			new_data = FIFO_Get(&ADC_val);
+		}
+		
+		// convert ADC to Temperature
+		// plot Temperature data
+		
+		/* used for prep
 		uint16_t count = CheckCount();
-		//UART_OutUDec(count);
-		//UART_OutString(" ");
 		if(count == 5) { // ADC values array is full
 			break;
 		}
+		*/
   }
+	
+	/* used for prep
 	uint32_t* ADC_values = GetADCvalues();
 	UART_OutString("\n\rADC data =");
 	for(int i = 0; i < 5; i++) { // output ADC values to UART
@@ -95,6 +109,7 @@ int main(void){
 		}
 	}
 	ST7735_OutUDec(ADC_values[0]); 
+	*/
 
 }
 

@@ -12,7 +12,7 @@ long StartCritical (void);    // previous I bit, disable interrupts
 void EndCritical(long sr);    // restore I bit to previous value
 void WaitForInterrupt(void);  // low power mode
 
-#define FIFO_SIZE 100
+#define FIFO_SIZE 1000
 
 uint32_t Size = 0;
 uint32_t FIFO[FIFO_SIZE];
