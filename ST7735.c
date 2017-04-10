@@ -1612,8 +1612,8 @@ void Output_Color(uint32_t newColor){ // Set color of future output
   ST7735_SetTextColor(newColor);
 }
 
-void ST7735_sDecOut2(int32_t n) {
-	if(n > 9999 || n < -9999) { // number is out of range
+void ST7735_sDecOut2(uint32_t n) {
+	if(n > 9999) { // number is out of range
 			ST7735_OutChar(' ');
 			ST7735_OutChar('*');
 			ST7735_OutChar('.');
@@ -1622,10 +1622,7 @@ void ST7735_sDecOut2(int32_t n) {
 			}
 			return;
 	}
-	bool neg = (n < 0); 
-	if(neg) { // make n positive so digits are abs value
-			n = -n;
-	}
+	
 	int32_t rem = n % 1000;
 	int32_t thous = n / 1000; // ones place
 	int32_t hund = rem / 100; // tenths place
@@ -1633,11 +1630,7 @@ void ST7735_sDecOut2(int32_t n) {
 	int32_t tens = rem / 10; // hundredths place
 	int32_t ones = rem % 10; // thousandths place
 	
-	if(neg) {
-		ST7735_OutChar('-');
-	} else {
-		ST7735_OutChar(' ');
-	}
+	ST7735_OutChar(' ');
 	
 	ST7735_OutChar((char) thous+48);
 	ST7735_OutChar((char) hund+48);

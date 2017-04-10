@@ -455,6 +455,6 @@ void Output_On(void);
 // Output: none
 void Output_Color(uint32_t newColor);
 
-void ST7735_sDecOut2(int32_t n);
+void ST7735_sDecOut2(uint32_t n);
 
 #endif

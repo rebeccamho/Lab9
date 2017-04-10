@@ -43,6 +43,8 @@ void WaitForInterrupt(void);  // low power mode
 
 #define F1KHZ 80000000/1000
 #define F100HZ 80000000/100
+#define fs 100
+#define N 64
 
 //debug code
 //
@@ -77,6 +79,7 @@ int main(void){
 	ST7735_SetCursor(0,2); ST7735_OutString("T="); ST7735_sDecOut2(2500);
                         ST7735_OutString(" C");
 
+	int j = 0;
   while(1){
     WaitForInterrupt();
     GPIO_PORTF_DATA_R ^= 0x04;             // toggle LED
@@ -89,6 +92,16 @@ int main(void){
 		
 		// convert ADC to Temperature
 		// plot Temperature data
+		uint32_t Temperature = ADC_val;
+		ST7735_PlotPoint(Temperature);  // Measured temperature
+    if((j&(N-1))==0){          // fs sampling, fs/N samples plotted per second
+      ST7735_PlotNextErase();  // overwrites N points on same line
+    }
+    if((j%fs)==0){    // fs sampling, 1 Hz display of numerical data
+      ST7735_SetCursor(3,1); ST7735_OutUDec(ADC_val);            // 0 to 4095
+      ST7735_SetCursor(3,2); ST7735_sDecOut2(Temperature); // 0.01 C 
+    }
+    j++;                       // counts the number of samples
 		
 		/* used for prep
 		uint16_t count = CheckCount();
