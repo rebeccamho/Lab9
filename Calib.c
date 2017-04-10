@@ -2,6 +2,9 @@
 //Matt Owens and Rebecca Ho
 //April 9, 2017
 
+#include <stdint.h>
+#include <stdbool.h>
+
 uint16_t const ADCdata[53]={0,382,436,492,548,606,665,724,785,847,911,
 	975,1041,1108,1176,1245,1316,1388,1461,1536,1612,
 	1689,1768,1848,1930,2013,2098,2184,2272,2361,2452,
@@ -35,7 +38,7 @@ uint16_t findLowIndex(uint32_t adc_val){
 			return i;
 		}
 	}
-	return -1;
+	return 5000;
 }
 
 //temp_low*1000 - (temp_low - temp_high)*1000/(adc_high - adc_low) * (adc_current-adc_low)

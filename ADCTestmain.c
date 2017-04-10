@@ -34,6 +34,7 @@
 #include "UART.h"
 #include "ST7735.h"
 #include "FIFO.h"
+#include "Calib.h"
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -92,7 +93,7 @@ int main(void){
 		
 		// convert ADC to Temperature
 		// plot Temperature data
-		uint32_t Temperature = ADC_val;
+		uint32_t Temperature = ConvertADCToTemp(ADC_val);
 		ST7735_PlotPoint(Temperature);  // Measured temperature
     if((j&(N-1))==0){          // fs sampling, fs/N samples plotted per second
       ST7735_PlotNextErase();  // overwrites N points on same line
