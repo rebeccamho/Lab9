@@ -52,5 +52,6 @@ uint32_t ConvertADCToTemp(uint32_t adc_value){
 	int adc_low = ADCdata[index];
 	int adc_high = ADCdata[index+1];
 	
-	return temp_low * 1000 - (((temp_low - temp_high) * 10000) / (adc_high - adc_low) * (adc_value - adc_low));
+	uint32_t temp = temp_low * 10000 - (((temp_low - temp_high) * 10000) / (adc_high - adc_low) * (adc_value - adc_low));
+	return temp/10000;
 }
